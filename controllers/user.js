@@ -1,4 +1,5 @@
 import  express, { response } from 'express'
+import Usuario from '../models/usuario.js'
 
 const getUser = (req, res = response) => {
 
@@ -13,16 +14,16 @@ const getUser = (req, res = response) => {
     })
   }
 
-  const postUser = (req, res = response) => {
+  const postUser = async (req, res = response) => {
 
-    const {name, age} = req.body
-   //console.log(req.body)
+    const body = req.body
+    const user = new Usuario(body) 
+    await user.save();
+   
 
     res.json({
         "ok": true,
-        "msg": "Post - Controller",
-        "name": name,
-        "age": age
+        "body": user
     })
   }
 
