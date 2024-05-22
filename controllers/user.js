@@ -17,8 +17,18 @@ const getUser = (req, res = response) => {
 
   const postUser = async (req, res = response) => {
 
+
+
     const { name, mail, password, role } = req.body
     const user = new Usuario({ name, mail, password, role }) 
+
+    //verificar correo duploicado
+    const emailExist = await Usuario.findOne({mail})
+    if (emailExist) {
+      return res.status(400).json({
+        msg: 'Email already exists'
+      })
+    }
 
     //encriptar pass
     const salt = bcryptjs.genSaltSync();

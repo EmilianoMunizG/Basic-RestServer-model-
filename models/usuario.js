@@ -16,7 +16,6 @@ const userModel = Schema({
     role:{
         type: String,
         required: [true, 'The name is required'],
-        enum: ['USER_ROLE', 'ADMIN_ROLE']
     },
     img:{
         type: String,
