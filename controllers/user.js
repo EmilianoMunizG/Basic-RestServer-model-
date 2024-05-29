@@ -17,18 +17,8 @@ const getUser = (req, res = response) => {
 
   const postUser = async (req, res = response) => {
 
-
-
     const { name, mail, password, role } = req.body
     const user = new Usuario({ name, mail, password, role }) 
-
-    //verificar correo duploicado
-    const emailExist = await Usuario.findOne({mail})
-    if (emailExist) {
-      return res.status(400).json({
-        msg: 'Email already exists'
-      })
-    }
 
     //encriptar pass
     const salt = bcryptjs.genSaltSync();
@@ -44,14 +34,23 @@ const getUser = (req, res = response) => {
     })
   }
 
-  const putUser = (req, res = response) => {
+  const putUser = async(req, res = response) => {
 
     const { id } = req.params;
+    const { password, google, correo, ...rest } = req.body
+
+    if (password) {
+          //encriptar pass
+    const salt = bcryptjs.genSaltSync();
+    rest.password = bcryptjs.hashSync(password, salt)
+    }
+
+    const user = await Usuario.findByIdAndUpdate(id, rest, {new: true})
 
     res.json({
         "ok": true,
-        "msg": "Put - Controller",
-        id
+        id,
+        user
     })
   }
 
