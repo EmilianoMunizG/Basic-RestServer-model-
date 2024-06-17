@@ -2,16 +2,21 @@ import  express, { response } from 'express'
 import Usuario from '../models/usuario.js'
 import bcryptjs from 'bcryptjs';
 
-const getUser = (req, res = response) => {
+const getUser = async (req, res = response) => {
 
-  const { pageIndex, qty, nombres } = req.query
+  const { limit = 5, from = 0 } = req.query
+  //const query = { estado : true }
 
+  const [total, users] = await Promise.all([
+    Usuario.countDocuments(),  //como parametro iria query
+    Usuario.find()
+    .skip(Number(from))
+    .limit(Number(limit))
+  ]);
+   
     res.json({
-        "ok": true,
-        "msg": "Get - Controller",
-        pageIndex,
-        qty,
-        nombres
+        total,
+        users
     })
   }
 
@@ -37,7 +42,7 @@ const getUser = (req, res = response) => {
   const putUser = async(req, res = response) => {
 
     const { id } = req.params;
-    const { password, google, correo, ...rest } = req.body
+    const { _id, password, google, correo, ...rest } = req.body
 
     if (password) {
           //encriptar pass
@@ -54,10 +59,14 @@ const getUser = (req, res = response) => {
     })
   }
 
-  const deleteUser = (req, res = response) => {
+  const deleteUser = async (req, res = response) => {
+    const { id } = req.params;
+    const user = await Usuario.findByIdAndDelete( id )
+    //const user = await Usuario.findByIdAndUpdate( id, {estado:false} )   <== Para inactivarlo (Seria lo correcto)
+    
+
     res.json({
-        "ok": true,
-        "msg": "Delete - Controller"
+      user
     })
   }
 
