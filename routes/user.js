@@ -2,6 +2,7 @@ import  express, { Router } from 'express'
 import { getUser, postUser, putUser, deleteUser } from '../controllers/user.js'
 import { check } from 'express-validator'
 import validateFields from '../middlewares/validate-fields.js';
+import validarJWT from '../middlewares/validate-jwt.js'
 import { isValidRole, mailExist, userExistById  } from '../helpers/db-validators.js';
 
 
@@ -15,7 +16,9 @@ userRouter.get('/', getUser)
     validateFields
   ],putUser)
 
-  userRouter.delete('/:id', deleteUser)
+  userRouter.delete('/:id', [
+    validarJWT
+  ],deleteUser)
 
   userRouter.post('/', [
     check('name', 'This name is mandatory').not().isEmpty(),

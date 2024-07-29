@@ -62,11 +62,13 @@ const getUser = async (req, res = response) => {
   const deleteUser = async (req, res = response) => {
     const { id } = req.params;
     const user = await Usuario.findByIdAndDelete( id )
+    const userAuthed = req.usuario;
     //const user = await Usuario.findByIdAndUpdate( id, {estado:false} )   <== Para inactivarlo (Seria lo correcto)
     
 
     res.json({
-      user
+      user, 
+      userAuthed
     })
   }
 
